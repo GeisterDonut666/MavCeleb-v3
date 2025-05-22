@@ -1,0 +1,88 @@
+General Notes:
+ - candidate_list and idList are assumed to be Linux plain text documents, which don't have the .txt file extension. You may need to change this for Windows.
+ - In the first few stages the filepaths are os invariant. In some of the later ones they're Linux syntax, and some old code I didn't end up using will have Windows syntax.
+ - Check ffmpeg (and other?) process calls and make sure they work
+
+
+
+STAGE 1:
+IN: 
+ - candidate_list textfile (contains one name per line)
+RUN: 
+ - (optional) sort_file.py - to sort your candidate_list alphabetically
+ - get_links.py - get download links from YouTube
+OUT: 
+ - identities folder with dowload links
+ - idList with identities (names and id nr)
+
+
+STAGE 2:
+IN: 
+ - identities folder
+ - idList
+RUN: 
+ - downVids.py - NOTE: you will need to dowload pytubefix
+ - noAudio.py - this should delete every video without audio
+ - NOTE: something to delete duplicates would be cool?
+OUT:
+ - identities as before, but with .mp4 vids
+
+
+STAGE 3:
+IN:
+ - identities folder
+ - idList
+RUN:
+ - rename_folders.py - This replaces whitespaces with '_' in file paths
+ - faceTrackE.py - NOTE: faceTrackU.py is mostly identical, but has not been updated/altered to run in the environment
+ - (optional) count_processed.py - counts the amount of processed videos 
+OUT:
+ - facetracks folder with videos cut up into facetracks, each ideally a single utterance (including all persons, not just POI)
+ 
+ 
+STAGE 4:
+IN:
+ - facetracks
+RUN:
+ - syncRunE.py - This stage should filter out facetracks, where the active speaker is not the face in focus. However, the threshold might need to be adjusted for good results.
+OUT
+ - facetracks
+
+
+STAGE 5:
+IN:
+ - idList
+RUN:
+ - staticImages.py - dowload images from Google Images
+ - removeDuplicates.py
+ - multiFaceDetection.py - crops face(s) out of images
+ - dbscan.py
+ - data_split.py - train/valid split. Do before augmentation, otherwise no IID 
+ - dataAug.py
+OUT:
+ - train_valid_split_aug - image dataset to train facenet on, train/valid split and data augmented
+
+
+STAGE 6:
+IN: 
+ - facetracks
+ - train_valid_split_aug
+RUN:
+ - facenet_train.py
+ - facenet_test.py
+ - clean.py
+ - (optional) sanity_check.py
+OUT:
+ - cleanVid - end result videos
+
+
+STAGE 6B: 
+IN:
+ - cleanVid
+RUN:
+ - check your videos manually for correctness (identity and language)
+ - extract_img.py
+ - extract_wav.py
+OUT:
+ - cleanImg - face images (every 25 frames)
+ - cleanWav - voicetracks
