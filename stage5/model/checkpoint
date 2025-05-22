@@ -1,0 +1,4 @@
+model_checkpoint_path: "/home/super/models/facenet/20180420-132815/model-20180420-132815.ckpt-200000"
+all_model_checkpoint_paths: "/home/super/models/facenet/20180420-132815/model-20180420-132815.ckpt-198000"
+all_model_checkpoint_paths: "/home/super/models/facenet/20180420-132815/model-20180420-132815.ckpt-199000"
+all_model_checkpoint_paths: "/home/super/models/facenet/20180420-132815/model-20180420-132815.ckpt-200000"
